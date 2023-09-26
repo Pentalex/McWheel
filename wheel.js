@@ -4,7 +4,7 @@ function checkItem(item){
     label = item.label.toLowerCase()
   }
   if(!item || !label || label.includes("egg") || label.includes("bedrock") || label.includes("head") ||
-     label.includes("chainmail") || label.includes("end")){
+     label.includes("chainmail") || label.includes("end") || label.includes("portal")){
     return false
   }
   return true
