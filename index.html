@@ -62,7 +62,10 @@
       location.reload()
     }
   }
-  ComfyJS.Init("oomfies");
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const twitchname = urlParams.get('name');
+  ComfyJS.Init(twitchname);
 
   $(document).ready(function () {
     //setup multiple rows of colours, can also add and remove while spinning but overall this is easier.
