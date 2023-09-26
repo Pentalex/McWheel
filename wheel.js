@@ -11,16 +11,28 @@ function checkItem(item){
 }
 
 async function initWheel() {
-  URL = "/minecraft-block-and-entity.json"
-  var blockList = await fetch(URL, {
-    mode: 'cors',
-    headers: {
-      'Access-Control-Allow-Origin': 'http://www.gamergeeks.net'
-    }
-  })
-    .then(response => response.json())
-    .then(data => { return data })
-  var counter = 0
+  var getJSON = function(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        var status = xhr.status;
+        if (status === 200) {
+          callback(null, xhr.response);
+        } else {
+          callback(status, xhr.response);
+        }
+      };
+      xhr.send();
+  };
+  URL = "https://raw.githubusercontent.com/Pentalex/McWheel/main/minecraft-block-and-entity.json"
+
+  getJSON(URL,
+  function(err, blockList) {
+    if (err !== null) {
+      alert('Something went wrong: ' + err);
+    } else {
+      var counter = 0
   randomItems = []
   const shuffled = blockList.sort(() => 0.5 - Math.random());
   while(randomItems.length < 100){
@@ -42,6 +54,9 @@ async function initWheel() {
   for (var x = 0; x < 5; x++) {
     $wheel.append(row);
   }
+    }
+  });
+
 }
 
 function initTimer(result){
