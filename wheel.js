@@ -4,7 +4,9 @@ function checkItem(item){
     label = item.label.toLowerCase()
   }
   if(!item || !label || label.includes("egg") || label.includes("bedrock") || label.includes("head") ||
-     label.includes("chainmail") || label.includes("end") || label.includes("portal")){
+     label.includes("chainmail") || label.includes("end") || label.includes("portal") || label.includes("command block") ||
+     label.includes("barrier") || label.includes("air") || label.includes("tall grass") || label.includes("fire") ||
+     label.includes("moving piston")){
     return false
   }
   return true
