@@ -41,7 +41,7 @@
   var randomItems = []
   var currentTimer;
 
-  ComfyJS.onCommand = (user, command, message, flags, extra) => {
+  ComfyJS.onCommand = async (user, command, message, flags, extra) => {
     var priviliged = (flags.broadcaster || flags.mod)
     if (!priviliged) {
       return
@@ -60,6 +60,23 @@
       spinWheel(position, selected);
     } else if (command == "reset") {
       location.reload()
+    } else if (command == "pausetime") {
+      currentTimer.pause()
+      console.log(curerntTimer)
+    } else if (command == "starttime") {
+      currentTimer.start()
+    }
+    else if (command == "restart") {
+      try {
+
+        const result = parseArguments(message);
+        item = await findItem(result.itemName)
+
+        initTimer(item, result.timeCount)
+      } catch (e) {
+        console.log(e)
+      }
+      console.log(message)
     }
   }
 

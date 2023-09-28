@@ -12,29 +12,52 @@ function checkItem(item){
   return true
 }
 
-async function initWheel() {
-  var getJSON = function(url, callback) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'json';
-      xhr.onload = function() {
-        var status = xhr.status;
-        if (status === 200) {
-          callback(null, xhr.response);
+function getJSON(url) {
+  return new Promise(function (resolve, reject) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onload = function () {
+        if (this.status >= 200 && this.status < 300) {
+            resolve(xhr.response);
         } else {
-          callback(status, xhr.response);
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
         }
-      };
-      xhr.send();
-  };
+    };
+    xhr.onerror = function () {
+        reject({
+            status: this.status,
+            statusText: xhr.statusText
+        });
+    };
+    xhr.send();
+})};
+async function findItem(item){
+  item = item.toLowerCase()
+  console.log(item)
+  var foundItem;
+  URL = "https://raw.githubusercontent.com/Pentalex/McWheel/main/minecraft-block-and-entity.json"
+  blockList = JSON.parse((await getJSON(URL)))
+  console.log(blockList)
+  foundItem = blockList.find(block_item => block_item.label.toLowerCase() === item);
+
+  console.log(foundItem)
+  if (foundItem) {
+    console.log(foundItem)
+    return foundItem
+  } else {
+    return null
+  }
+}
+
+async function initWheel() {
   URL = "https://raw.githubusercontent.com/Pentalex/McWheel/main/minecraft-block-and-entity.json"
 
-  getJSON(URL,
-  function(err, blockList) {
-    if (err !== null) {
-      alert('Something went wrong: ' + err);
-    } else {
-      var counter = 0
+  URL = "https://raw.githubusercontent.com/Pentalex/McWheel/main/minecraft-block-and-entity.json"
+  blockList = JSON.parse((await getJSON(URL)))
+  var counter = 0
   randomItems = []
   const shuffled = blockList.sort(() => 0.5 - Math.random());
   while(randomItems.length < 100){
@@ -44,6 +67,7 @@ async function initWheel() {
     }
     counter += 1
   }
+
   var $wheel = $('.roulette-wrapper .wheel'),
     row = "";
 
@@ -56,13 +80,26 @@ async function initWheel() {
   for (var x = 0; x < 5; x++) {
     $wheel.append(row);
   }
-    }
-  });
-
 }
 
-function initTimer(result){
-  currentTimer = new easytimer.Timer();
+function parseArguments(argumentString) {
+  const pattern = /(.+?)(?:\s+(\d+))?$/;
+  const match = argumentString.match(pattern);
+
+  if (match) {
+    const itemName = match[1].trim();
+    const timeCount = match[2] ? parseInt(match[2], 10) : 0;
+    return { itemName, timeCount };
+  } else {
+    return null;
+  }
+}
+
+
+
+function initTimer(result, startTime=0){
+  $('.wheel-wrap').hide()
+  currentTimer = new easytimer.Timer({startValues: {seconds: startTime}});
   $('.timer-wrapper').show()
   currentTimer.start();
   currentTimer.addEventListener('secondsUpdated', function (e) {
@@ -80,7 +117,6 @@ function endingWheel(result) {
   console.log(result)
   $('#resultHeader').show()
   $('#result').html(result.label)
-  $('.wheel-wrap').hide()
   initTimer(result)
 }
 
